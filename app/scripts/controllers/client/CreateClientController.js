@@ -6,6 +6,7 @@
             scope.savingproducts = [];
             scope.first = {};
             scope.first.date = new Date();
+			scope.first.submitondate = new Date ();
             scope.formData = {};
             scope.restrictDate = new Date();
             scope.showSavingOptions = false;
@@ -47,6 +48,12 @@
                     scope.choice = 0;
                 }
             };
+            if(routeParams.groupId) {
+            	scope.cancel = '#/viewgroup/' + routeParams.groupId
+            	scope.groupid = routeParams.groupId;
+            }else {
+            	scope.cancel = "#/clients"
+            }
 
             scope.submit = function () {
                 var reqDate = dateFilter(scope.first.date, scope.df);

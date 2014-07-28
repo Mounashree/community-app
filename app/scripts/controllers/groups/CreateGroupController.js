@@ -22,35 +22,30 @@
                 scope.staffs = data.staffOptions;
                 scope.clients = data.clientOptions;
             });
-            scope.add = function () {
-                for (var i in this.available) {
-                    for (var j in scope.clients) {
-                        if (scope.clients[j].id == this.available[i]) {
-                            var temp = {};
-                            temp.id = this.available[i];
-                            temp.displayName = scope.clients[j].displayName;
-                            scope.addedClients.push(temp);
-                            scope.clients.splice(j, 1);
-                        }
-                    }
-                }
-
+            
+            scope.viewClient = function (item) {
+                scope.client = item;
             };
-            scope.sub = function () {
-                for (var i in this.added) {
-                    for (var j in scope.addedClients) {
-                        if (scope.addedClients[j].id == this.added[i]) {
-                            var temp = {};
-                            temp.id = this.added[i];
-                            temp.displayName = scope.addedClients[j].displayName;
-                            scope.clients.push(temp);
-                            scope.addedClients.splice(j, 1);
-                        }
+            
+            scope.add = function () {
+            	if(scope.available != ""){
+            		var temp = {};
+                    temp.id = scope.available.id;
+                    temp.displayName = scope.available.displayName;
+                	scope.addedClients.push(temp);
+            	}
+            };
+            scope.sub = function (id) {
+            	for (var i = 0; i < scope.addedClients.length; i++) {
+                    if (scope.addedClients[i].id == id) {
+                        scope.addedClients.splice(i, 1);
+                        break;
                     }
                 }
             };
             scope.changeOffice = function (officeId) {
                 scope.addedClients = [];
+                scope.available = [];
                 resourceFactory.groupTemplateResource.get({staffInSelectedOfficeOnly: false, officeId: officeId,staffInSelectedOfficeOnly:true
                 }, function (data) {
                     scope.staffs = data.staffOptions;
@@ -67,6 +62,14 @@
                     scope.choice = 0;
                 }
             };
+            
+            if(routeParams.centerId) {
+            	scope.cancel = '#/viewcenter/' + routeParams.centerId
+            	scope.centerid = routeParams.centerId;
+        	}else {
+        		scope.cancel = "#/groups"
+        	}
+            
             scope.submit = function () {
                 for (var i in scope.addedClients) {
                     scope.formData.clientMembers[i] = scope.addedClients[i].id;
