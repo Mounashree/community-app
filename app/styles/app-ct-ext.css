@@ -1,0 +1,16 @@
+/* app css stylesheet Conflux extension file*/
+.table-bg-white {
+   background-color: #FFFFFF !important; 
+}
+
+.table-cs tbody tr td , thead tr th{
+   padding: 0px 5px 0px 5px;
+}
+
+.center-align {
+    text-align: center;
+}
+
+.cs-container{
+    padding: 10px 0px 0px 0px;   
+}
