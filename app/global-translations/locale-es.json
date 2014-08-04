@@ -1,4 +1,4 @@
-{
+﻿{
 	"@metadata": {
 		"authors": [
 			"Fitoschido",
@@ -152,6 +152,7 @@
 	"label.button.enable": "Activar",
 	"label.button.disable": "Desactiver",
 	"label.button.collectionsheet": "Hoja de recaudación",
+	"label.button.recalculate": "Recalculado",
 	"label.button.submitandnextcenter": "Enviar y siguiente centro",
 	"label.button.viewfullscreen": "Vista de pantalla completa",
 	"label.button.productivecollectionsheet": "Hoja de recaudación productiva",
