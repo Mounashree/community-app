@@ -217,6 +217,7 @@
             <th>{{'label.heading.collectedon' | translate}}</th>
             <th>{{'label.heading.date' | translate}}</th>
             <th>{{'label.heading.repaymentsevery' | translate}}</th>
+			<th>{{'label.heading.syncrecurringchargeswithmeeting' | translate}}</th>
             <th>{{'label.heading.actions' | translate}}</th>
         </tr>
         <tr ng-repeat="charge in charges">
@@ -245,6 +246,10 @@
                        ng-model="charge.feeInterval" ng-switch-when='Monthly Fee'/>
                 <input id="charges[{{$index}}].feeInterval" class="input-sm form-control" type="text"
                        ng-model="charge.feeInterval" ng-switch-when='Weekly Fee'/>
+            </td>
+			<td>
+                <input id="charges[{{$index}}].isCalendarInherited" class="input-sm form-control" 
+					   type="checkbox" ng-model="charge.isCalendarInherited" ng-show="isRecurringFee(charge.chargeTimeType)">
             </td>
             <td><a ng-click="deleteCharge($index)"><i class="icon-remove icon-white"></i></a></td>
         </tr>

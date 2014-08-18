@@ -1417,6 +1417,7 @@
     "label.heading.banknumber": "Bank#",
     "label.heading.savingapplication": "Saving Application",
     "label.heading.repaymentsevery": "Repayments Every",
+	"label.heading.syncrecurringchargeswithmeeting": "Sync with meeting",
     "label.heading.fieldofficer": "Field Officer",
     "label.heading.accountdetail": "Account Detail",
     "label.heading.totaldeposits": "Total Deposits",
