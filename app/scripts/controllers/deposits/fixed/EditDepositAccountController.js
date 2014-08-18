@@ -25,6 +25,8 @@
                             scope.charges[i].feeOnMonthDay = new Date(dateFilter(scope.charges[i].feeOnMonthDay, scope.df));
                         } else if (scope.charges[i].chargeTimeType.value == 'Specified due date') {
                             scope.charges[i].dueDate = new Date(dateFilter(scope.charges[i].dueDate, scope.df));
+                        } else if (scope.charges[i].chargeTimeType.value == 'Weekly Fee') {
+                            scope.charges[i].dueDate = new Date(dateFilter(scope.charges[i].dueDate, scope.df));
                         }
                     }
                 }
@@ -173,12 +175,12 @@
                         data.chargeId = data.id;
                         if (data.chargeTimeType.value == "Annual Fee") {
                             if (data.feeOnMonthDay) {
-                                data.feeOnMonthDay.push(2013);
+                                data.feeOnMonthDay.push(2014);
                                 data.feeOnMonthDay = new Date(dateFilter(data.feeOnMonthDay, scope.df));
                             }
                         } else if (data.chargeTimeType.value == "Monthly Fee") {
                             if (data.feeOnMonthDay) {
-                                data.feeOnMonthDay.push(2013);
+                                data.feeOnMonthDay.push(2014);
                                 data.feeOnMonthDay = new Date(dateFilter(data.feeOnMonthDay, scope.df));
                             }
                         }
@@ -210,16 +212,22 @@
                 if (scope.charges.length > 0) {
                     for (var i in scope.charges) {
                         if (scope.charges[i].chargeTimeType.value == 'Annual Fee') {
-                            this.formData.charges.push({ chargeId: scope.charges[i].chargeId, amount: scope.charges[i].amount,
-                                feeOnMonthDay: dateFilter(scope.charges[i].feeOnMonthDay, 'dd MMMM')});
+                            this.formData.charges.push({ id: scope.charges[i].id, chargeId: scope.charges[i].chargeId,
+							amount: scope.charges[i].amount, feeOnMonthDay: dateFilter(scope.charges[i].feeOnMonthDay, 'dd MMMM')});
                         } else if (scope.charges[i].chargeTimeType.value == 'Specified due date') {
-                            this.formData.charges.push({ chargeId: scope.charges[i].chargeId, amount: scope.charges[i].amount,
-                                dueDate: dateFilter(scope.charges[i].dueDate, scope.df)});
+                            this.formData.charges.push({ id: scope.charges[i].id, chargeId: scope.charges[i].chargeId,
+							amount: scope.charges[i].amount, dueDate: dateFilter(scope.charges[i].dueDate, scope.df)});
                         } else if (scope.charges[i].chargeTimeType.value == 'Monthly Fee') {
-                            this.formData.charges.push({ chargeId: scope.charges[i].chargeId, amount: scope.charges[i].amount,
-                                feeOnMonthDay: dateFilter(scope.charges[i].feeOnMonthDay, 'dd MMMM'), feeInterval: scope.charges[i].feeInterval});
+                            this.formData.charges.push({ id: scope.charges[i].id, chargeId: scope.charges[i].chargeId,
+							amount: scope.charges[i].amount, feeOnMonthDay: dateFilter(scope.charges[i].feeOnMonthDay, 'dd MMMM'),
+							feeInterval: scope.charges[i].feeInterval});
+                        } else if (scope.charges[i].chargeTimeType.value == 'Weekly Fee') {
+                            this.formData.charges.push({ id: scope.charges[i].id, chargeId: scope.charges[i].chargeId,
+							amount: scope.charges[i].amount, dueDate: dateFilter(scope.charges[i].dueDate, scope.df),
+							feeInterval: scope.charges[i].feeInterval});
                         } else {
-                            this.formData.charges.push({ chargeId: scope.charges[i].chargeId, amount: scope.charges[i].amount});
+                            this.formData.charges.push({ id: scope.charges[i].id, chargeId: scope.charges[i].chargeId,
+							amount: scope.charges[i].amount});
                         }
                     }
                 }

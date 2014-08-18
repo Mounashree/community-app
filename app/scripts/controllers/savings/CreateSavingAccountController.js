@@ -42,8 +42,8 @@
                     scope.charges = data.charges;
 
                     for (var i in scope.charges) {
-                        if (scope.charges[i].chargeTimeType.value === "Annual Fee" && scope.charges[i].feeOnMonthDay) {
-                            scope.charges[i].feeOnMonthDay.push('2013');
+                        if ((scope.charges[i].chargeTimeType.value === "Annual Fee" || scope.charges[i].chargeTimeType.value === "Monthly Fee") && scope.charges[i].feeOnMonthDay) {
+                            scope.charges[i].feeOnMonthDay.push('2014');
                             scope.charges[i].feeOnMonthDay = new Date(dateFilter(scope.charges[i].feeOnMonthDay, scope.df));
                         }
                     }
@@ -77,12 +77,12 @@
                         data.chargeId = data.id;
                         if (data.chargeTimeType.value == "Annual Fee") {
                             if (data.feeOnMonthDay) {
-                                data.feeOnMonthDay.push(2013);
+                                data.feeOnMonthDay.push(2014);
                                 data.feeOnMonthDay = new Date(dateFilter(data.feeOnMonthDay, scope.df));
                             }
                         } else if (data.chargeTimeType.value == "Monthly Fee") {
                             if (data.feeOnMonthDay) {
-                                data.feeOnMonthDay.push(2013);
+                                data.feeOnMonthDay.push(2014);
                                 data.feeOnMonthDay = new Date(dateFilter(data.feeOnMonthDay, scope.df));
                             }
                         }
@@ -118,15 +118,19 @@
                         
                         if (scope.charges[i].chargeTimeType.value == 'Annual Fee') {
                             this.formData.charges.push({ chargeId: scope.charges[i].chargeId, amount: scope.charges[i].amount,
-                                feeOnMonthDay: dateFilter(scope.charges[i].feeOnMonthDay, 'dd MMMM')});
+                                feeOnMonthDay: dateFilter(scope.charges[i].feeOnMonthDay, 'dd MMMM'),
+								isCalendarInherited: scope.charges[i].isCalendarInherited});
                         } else if (scope.charges[i].chargeTimeType.value == 'Specified due date') {
                             this.formData.charges.push({ chargeId: scope.charges[i].chargeId, amount: scope.charges[i].amount,
                                 dueDate: dateFilter(scope.charges[i].dueDate, scope.df)});
                         } else if (scope.charges[i].chargeTimeType.value == 'Monthly Fee') {
                             this.formData.charges.push({ chargeId: scope.charges[i].chargeId, amount: scope.charges[i].amount,
-                                feeOnMonthDay: dateFilter(scope.charges[i].feeOnMonthDay, 'dd MMMM'), feeInterval: scope.charges[i].feeInterval});
+                                feeOnMonthDay: dateFilter(scope.charges[i].feeOnMonthDay, 'dd MMMM'),
+								feeInterval: scope.charges[i].feeInterval, isCalendarInherited: scope.charges[i].isCalendarInherited});
                         } else if (scope.charges[i].chargeTimeType.value == 'Weekly Fee') {
-                            this.formData.charges.push({ chargeId: scope.charges[i].chargeId, amount: scope.charges[i].amount, dueDate: dateFilter(scope.charges[i].dueDate, scope.df), feeInterval: scope.charges[i].feeInterval});                            
+                            this.formData.charges.push({ chargeId: scope.charges[i].chargeId, amount: scope.charges[i].amount,
+							dueDate: dateFilter(scope.charges[i].dueDate, scope.df), feeInterval: scope.charges[i].feeInterval,
+							isCalendarInherited: scope.charges[i].isCalendarInherited});                            
                         }
                         else {
                             this.formData.charges.push({ chargeId: scope.charges[i].chargeId, amount: scope.charges[i].amount});
@@ -145,6 +149,14 @@
                     location.path('/viewcenter/' + scope.groupId);
                 } else {
                     location.path('/viewgroup/' + scope.groupId);
+                }
+            }
+			
+			scope.isRecurringFee = function (chargeTimeType) {
+                if (chargeTimeType.value == 'Annual Fee' || chargeTimeType.value == 'Monthly Fee' || chargeTimeType.value == 'Weekly Fee') {
+                    return true;
+                } else {
+                    return false;
                 }
             }
         }
