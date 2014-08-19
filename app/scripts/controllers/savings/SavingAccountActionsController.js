@@ -189,6 +189,15 @@
                     break;
                 case "waive":
                     scope.waiveCharge = true;
+					scope.formData.dueDate = new Date();
+                    resourceFactory.savingsResource.get({accountId: routeParams.id, resourceType: 'charges', chargeId: routeParams.chargeId,
+                        command: 'paycharge'}, function (data) {
+                        scope.formData.amount = data.amountOutstanding;
+                    });
+					scope.labelName = 'label.input.amount';
+                    scope.showAmountField = true;
+                    scope.paymentDatefield = true;
+                    scope.modelName = 'dueDate';
                     scope.taskPermissionName = 'WAIVE_SAVINGSACCOUNTCHARGE';
                     break;
             }
