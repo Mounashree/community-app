@@ -47,37 +47,48 @@
                 <label class="control-label col-sm-2">{{ 'label.input.chargetimetype' | translate }}</label>
 
                 <div class="col-sm-3">
-                    <select id="chargeTimeType" ng-model="chargeTimeType"
+                    <select id="chargeTimeType" ng-model="chargeTimeTypeId"
                             ng-options="chargeTime.id as chargeTime.value for chargeTime in chargeDetails.chargeTimeTypeOptions"
                             value="{{chargeTime.id}}" disabled="disabled" class="form-control">
                     </select>
                 </div>
             </div>
-            <div class="form-group" ng-show="!withDrawCharge && !chargeTimeTypeAnnualOrMonth">
-                <label class="control-label col-sm-2">{{ 'label.input.dueforcollectedon' | translate }}<span
-                        class="required">*</span></label>
-
-                <div class="col-sm-3">
-                    <input id="feeOnAnnualMonthDay" sort type="text" datepicker-pop="dd MMMM yyyy"
-                           ng-model="date.specificduedate" is-open="opened" class="form-control"/>
-                </div>
-            </div>
-            <div class="form-group" ng-show="!withDrawCharge && chargeTimeTypeAnnualOrMonth">
-                <label class="control-label col-sm-2">{{ 'label.input.dueon' | translate }}<span
-                        class="required">*</span></label>
-
-                <div class="col-sm-3">
-                    <input id="feeOnMonthDay" sort type="text" datepicker-pop="dd MMMM" ng-model="date.due"
-                           is-open="opened" class="form-control"/>
-                </div>
-            </div>
-            <div class="form-group" ng-show="chargeTimeType.value == 'Monthly Fee' ">
-                <label class="control-label col-sm-2">{{ 'label.repeatsevery' | translate }}<span
+			
+			<div class="form-group" ng-show="!withDrawCharge">
+				<label class="control-label col-sm-2">{{ 'label.input.dueon' | translate }}<span
+							class="required">*</span></label>
+				<div class="col-sm-3" ng-switch on="chargeTimeType.value">
+					<input id="date.specificduedate" class="input-medium form-control" 
+						   type="text" datepicker-pop="dd MMMM yyyy"
+						   ng-model="date.specificduedate" is-open="opened" ng-switch-when='Specified due date'/>
+					<input id="feeOnMonthDay" class="input-medium form-control" 
+						   type="text" datepicker-pop="dd MMMM"
+						   ng-model="date.due" is-open="opened" ng-switch-when='Annual Fee'/>	   
+					<input id="feeOnMonthDay" class="input-medium form-control" 
+						   type="text" datepicker-pop="dd MMMM"
+						   ng-model="date.due" is-open="opened" ng-switch-when='Monthly Fee'/>
+					<input id="date.specificduedate" class="input-medium form-control" 
+						   datepicker-pop="dd MMMM yyyy" ng-model="date.specificduedate" 
+						   is-open="opened" ng-switch-when='Weekly Fee'/>
+				</div>
+			</div>
+			
+            <div class="form-group" ng-show="chargeTimeTypeWeeklyOrMonth">
+                <label class="control-label col-sm-2">{{ 'label.heading.repaymentsevery' | translate }}<span
                         class="required">*</span></label>
 
                 <div class="col-sm-3">
                     <input type="text" class="input-small" ng-model="formData.feeInterval" class="form-control"/>
                 </div>
+            </div>
+			
+			<div class="form-group" ng-show="isRecurringCharge">
+				<label class="control-label col-sm-2">{{ 'label.heading.syncrecurringchargeswithmeeting' | translate }}<span
+							class="required">*</span></label>
+				<div class="col-sm-3">
+                <input class="input-small" class="form-control" 
+					   type="checkbox" ng-model="formData.isCalendarInherited">
+				</div>
             </div>
         </div>
 
