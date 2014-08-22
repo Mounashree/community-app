@@ -12,14 +12,25 @@
             scope.chargeSelected = function (id) {
                 resourceFactory.chargeResource.get({chargeId: id, template: 'true'}, function (data) {
                     scope.chargeCalculationType = data.chargeCalculationType.id;
-                    scope.chargeTimeType = data.chargeTimeType.id;
+                    scope.chargeTimeTypeId = data.chargeTimeType.id;
+					scope.chargeTimeType = data.chargeTimeType;
                     scope.chargeDetails = data;
                     scope.formData.amount = data.amount;
+					scope.formData.isCalendarInherited = false;
                     scope.withDrawCharge = data.chargeTimeType.value === "Withdrawal Fee" ? true : false;
                     scope.formData.feeInterval = data.feeInterval;
-                    if (data.chargeTimeType.value === "Annual Fee" || data.chargeTimeType.value === "Monthly Fee") {
+                    if (data.chargeTimeType.value === "Annual Fee" || data.chargeTimeType.value === "Monthly Fee")
                         scope.chargeTimeTypeAnnualOrMonth = true;
-                    }
+                    else
+						scope.chargeTimeTypeAnnualOrMonth = false;
+					if (data.chargeTimeType.value === "Weekly Fee" || data.chargeTimeType.value === "Monthly Fee")
+                        scope.chargeTimeTypeWeeklyOrMonth = true;
+                    else
+						scope.chargeTimeTypeWeeklyOrMonth = false;
+					if (data.chargeTimeType.value === "Weekly Fee" || data.chargeTimeType.value === "Monthly Fee" || data.chargeTimeType.value === "Annual Fee")
+                        scope.isRecurringCharge = true;
+					else
+						scope.isRecurringCharge = false;
                 });
             };
 

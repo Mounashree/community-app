@@ -153,12 +153,12 @@
             }
 			
 			scope.isRecurringFee = function (chargeTimeType) {
-                if (chargeTimeType.value == 'Annual Fee' || chargeTimeType.value == 'Monthly Fee' || chargeTimeType.value == 'Weekly Fee') {
+                if (chargeTimeType.value === 'Annual Fee' || chargeTimeType.value === 'Monthly Fee' || chargeTimeType.value === 'Weekly Fee') {
                     return true;
                 } else {
                     return false;
                 }
-            }
+            };
         }
     });
     mifosX.ng.application.controller('CreateSavingAccountController', ['$scope', 'ResourceFactory', '$location', '$routeParams', 'dateFilter', mifosX.controllers.CreateSavingAccountController]).run(function ($log) {
