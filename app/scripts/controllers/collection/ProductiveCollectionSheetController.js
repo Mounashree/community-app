@@ -76,7 +76,7 @@
                 scope.totalDueCollection = [];
                 scope.sumGroupCollection();
                 scope.sumSavingsDueCollection();
-				scope.sumSavingsWithdrawal();
+                scope.sumSavingsWithdrawal();
                 scope.sumLoansTotal();
                 scope.sumLoansDueByCurrency();
                 scope.sumSavingsDueByCurrency();
@@ -127,13 +127,13 @@
              */
             scope.sumGroupCollection = function () {
                 scope.savingsGroupsTotal = [];
-				scope.savingsWithdrawalGroupsTotal = [];
+                scope.savingsWithdrawalGroupsTotal = [];
                 scope.loanGroupsTotal = [];
                 _.each(scope.savingsgroups, function (group) {
                         _.each(group.clients, function (client) {
                             _.each(client.savings, function (saving) {
                                 scope.sumGroupSavingsDueCollection(group, saving);
-								scope.sumGroupSavingsWithdrawalCollection(group, saving);
+                                scope.sumGroupSavingsWithdrawalCollection(group, saving);
                             });
                             _.each(client.loans, function (loan) {
                                 scope.sumGroupLoansDueCollection(group, loan);
@@ -167,8 +167,8 @@
                     existing.dueAmount = Math.ceil((Number(existing.dueAmount) + Number(dueAmount)) * 100) / 100;
                 }
             };
-			
-			/**
+            
+            /**
              * Sum of savings withdrawals group by group id and savings product id
              * @param group
              * @param saving
@@ -253,8 +253,8 @@
                     }
                 });
             };
-			
-			/**
+            
+            /**
              * Sum of savings withdrawals across all groups group by savings product id
              */
             scope.sumSavingsWithdrawal = function () {
@@ -322,7 +322,9 @@
             scope.constructBulkTransactions = function(){
                 scope.bulkRepaymentTransactions = [];
                 scope.bulkSavingsDueTransactions = [];
-				scope.bulkSavingsWithdrawalTransactions = [];
+                scope.bulkSavingsWithdrawalTransactions = [];
+                scope.bulkDisbursementTransactions = [];
+
                 _.each(scope.savingsgroups, function (group) {
                         _.each(group.clients, function (client) {
                             _.each(client.savings, function (saving) {
@@ -335,7 +337,7 @@
                                     transactionAmount:dueAmount
                                 };
                                 scope.bulkSavingsDueTransactions.push(savingsDepositTransaction);
-								var withdrawalAmount = saving.withdrawalAmount;
+                                var withdrawalAmount = saving.withdrawalAmount;
                                 if (isNaN(withdrawalAmount)) {
                                     withdrawalAmount = parseInt(0);
                                 }
@@ -347,12 +349,25 @@
                             });
 
                             _.each(client.loans, function (loan) {
-                                var totalDue = scope.getLoanTotalDueAmount(loan);
-                                var loanTransaction = {
-                                    loanId:loan.loanId,
-                                    transactionAmount:totalDue
-                                };
-                                scope.bulkRepaymentTransactions.push(loanTransaction);
+
+                                if(loan.accountStatusId === 300){
+                                    var totalDue = scope.getLoanTotalDueAmount(loan);
+                                    var loanTransaction = {
+                                        loanId:loan.loanId,
+                                        transactionAmount:totalDue
+                                    };
+                                    scope.bulkRepaymentTransactions.push(loanTransaction);
+                                }
+
+
+                                if(loan.accountStatusId === 200){
+                                    var loanTransaction = {
+                                        loanId:loan.loanId,
+                                        transactionAmount:loan.disbursementAmount
+                                    };
+                                    scope.bulkDisbursementTransactions.push(loanTransaction);
+                                }
+
                             });
                         });
                     }
@@ -373,12 +388,13 @@
 
                 scope.formData.actualDisbursementDate = this.formData.transactionDate;
                 scope.formData.clientsAttendance = scope.clientsAttendance;
-                scope.formData.bulkDisbursementTransactions = [];
+
                 //construct loan repayment and savings due transactions
                 scope.constructBulkTransactions();
                 scope.formData.bulkRepaymentTransactions = scope.bulkRepaymentTransactions;
+                scope.formData.bulkDisbursementTransactions = scope.bulkDisbursementTransactions;
                 scope.formData.bulkSavingsDueTransactions = scope.bulkSavingsDueTransactions;
-				scope.formData.bulkSavingsWithdrawalTransactions = scope.bulkSavingsWithdrawalTransactions;
+                scope.formData.bulkSavingsWithdrawalTransactions = scope.bulkSavingsWithdrawalTransactions;
 
                 resourceFactory.centerResource.save({'centerId': scope.centerId, command: 'saveCollectionSheet'}, scope.formData, function (data) {
                     localStorageService.add('Success', true);
