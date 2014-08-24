@@ -2,7 +2,7 @@
 
 (function (module) {
     mifosX.controllers = _.extend(module, {
-        ProductiveCollectionSheetController: function (scope, routeParams, resourceFactory, dateFilter, location) {
+        ProductiveCollectionSheetController: function (scope, routeParams, rootScope, resourceFactory, dateFilter, location) {
             var params = {};
             params.locale = "en";
             params.dateFormat = scope.df;
@@ -59,7 +59,10 @@
                         break;
                     }
                 }
+				
+				rootScope.blockUI = true;
                 resourceFactory.centerResource.save({'centerId': scope.centerId, command: 'generateCollectionSheet'}, scope.formData, function (data) {
+					rootScope.blockUI = false;
                     scope.collectionsheetdata = data;
                     scope.clientsAttendanceArray(data.groups);
                     scope.savingsgroups = data.groups;
@@ -78,8 +81,10 @@
                 scope.sumSavingsDueCollection();
                 scope.sumSavingsWithdrawal();
                 scope.sumLoansTotal();
+				scope.sumLoansDisbursementTotal();
                 scope.sumLoansDueByCurrency();
                 scope.sumSavingsDueByCurrency();
+				scope.sumTotal();
             };
 
             scope.sumLoansDueByCurrency = function () {
@@ -129,6 +134,7 @@
                 scope.savingsGroupsTotal = [];
                 scope.savingsWithdrawalGroupsTotal = [];
                 scope.loanGroupsTotal = [];
+				scope.loanDisbursementGroupsTotal = [];
                 _.each(scope.savingsgroups, function (group) {
                         _.each(group.clients, function (client) {
                             _.each(client.savings, function (saving) {
@@ -137,6 +143,7 @@
                             });
                             _.each(client.loans, function (loan) {
                                 scope.sumGroupLoansDueCollection(group, loan);
+								scope.sumGroupLoansDisbursementCollection(group, loan);
                             });
                         });
                     }
@@ -214,6 +221,29 @@
                     scope.loanGroupsTotal.push(gp);
                 } else {
                     existing.dueAmount = Math.ceil((Number(existing.dueAmount) + Number(totalDue)) * 100) / 100;
+                }
+            };
+			
+			/**
+             * Sum of loans disbursement group by group id and loan product id
+             * @param group
+             * @param loan
+             */
+            scope.sumGroupLoansDisbursementCollection = function (group, loan) {
+                var existing = _.findWhere(scope.loanDisbursementGroupsTotal, {groupId: group.groupId, productId: loan.productId});
+                //alert(_.isObject(existing));
+                var totalDisbursement = loan.disbursementAmount;
+                if (existing === 'undefined' || !(_.isObject(existing))) {
+                    var gp = {
+                        groupId: group.groupId,
+                        productId: loan.productId,
+                        disbursementAmount: totalDisbursement,
+                        currencyCode: loan.currency.code,
+                        currencySymbol: loan.currency.displaySymbol
+                    };
+                    scope.loanDisbursementGroupsTotal.push(gp);
+                } else {
+                    existing.disbursementAmount = Math.ceil((Number(existing.disbursementAmount) + Number(totalDisbursement)) * 100) / 100;
                 }
             };
 
@@ -303,6 +333,56 @@
                     }
                 });
             };
+			
+			/**
+             * Sum of loans disbursements across all groups group by loan product id
+             */
+            scope.sumLoansDisbursementTotal = function () {
+                scope.loansDisbursementTotal = [];
+                _.each(scope.loanDisbursementGroupsTotal, function (group) {
+                    var disbursementAmount = group.disbursementAmount;
+                    if (isNaN(disbursementAmount)) {
+                        disbursementAmount = parseInt(0);
+                    }
+                    var existing = _.findWhere(scope.loansDisbursementTotal, {productId: group.productId});
+                    if (existing === 'undefined' || !(_.isObject(existing))) {
+                        var gp = {
+                            productId: group.productId,
+                            currencyCode: group.currencyCode,
+                            currencySymbol: group.currencySymbol,
+                            disbursementAmount: disbursementAmount
+                        };
+                        scope.loansDisbursementTotal.push(gp);
+                    } else {
+                        existing.disbursementAmount = Math.ceil((Number(existing.disbursementAmount) + Number(disbursementAmount)) * 100) / 100;
+                    }
+                });
+            };
+			
+			scope.sumTotal = function() {
+				scope.totalreceipts = 0;
+				scope.totalpayouts = 0;
+				scope.netcash = 0;
+				_.each(scope.loansTotal, function (product) {
+					var productSum = product.dueAmount;
+					scope.totalreceipts += productSum;
+				});
+				_.each(scope.savingsTotal, function (product) {
+					var productSum = product.dueAmount;
+					scope.totalreceipts += productSum;
+				});
+				
+				_.each(scope.loansDisbursementTotal, function (product) {
+					var productSum = product.disbursementAmount;
+					scope.totalpayouts += productSum;
+				});
+				_.each(scope.savingsWithdrawalTotal, function (product) {
+					var productSum = product.withdrawalAmount;
+					scope.totalpayouts += productSum;
+				});
+				
+				scope.netcash = scope.totalreceipts - scope.totalpayouts;
+			};
 
 
             scope.clientsAttendanceArray = function (groups) {
@@ -411,7 +491,7 @@
 
         }
     });
-    mifosX.ng.application.controller('ProductiveCollectionSheetController', ['$scope', '$routeParams', 'ResourceFactory', 'dateFilter', '$location', mifosX.controllers.ProductiveCollectionSheetController]).run(function ($log) {
+    mifosX.ng.application.controller('ProductiveCollectionSheetController', ['$scope', '$routeParams', '$rootScope', 'ResourceFactory', 'dateFilter', '$location', mifosX.controllers.ProductiveCollectionSheetController]).run(function ($log) {
         $log.info("ProductiveCollectionSheetController initialized");
     });
 }(mifosX.controllers || {}));
