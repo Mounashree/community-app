@@ -94,7 +94,7 @@
                     </tr>
                     <!-- group total -->
                     <tr>
-                        <td class="graybg" colspan="2" ng-show="collectionsheetdata.loanProductsDueForRepayment">{{'label.input.grouptotal' |
+                        <td class="graybg" colspan="2">{{'label.input.grouptotal' |
                             translate}}
                         </td>
                         <td ng-repeat="loanproduct in collectionsheetdata.loanProductsDueForRepayment">
@@ -110,6 +110,12 @@
                                           <input type="text" class="input-smaller"
                                                  ng-model="grouptotal.dueAmount" disabled="disabled">
                                       </span>
+                        </td>
+						<td ng-repeat="loanproduct in collectionsheetdata.loanProductsDueForDisbursal">
+                          <span ng-repeat="grouptotal in loanDisbursementGroupsTotal" 
+							ng-show="grouptotal.groupId === group.groupId && loanproduct.id === grouptotal.productId">
+                            <input type="text" class="input-smaller" ng-model="grouptotal.disbursementAmount" disabled="disabled">
+                          </span>
                         </td>
                         <td ng-repeat="savingsproduct in collectionsheetdata.savingsProducts">
                                       <span ng-repeat="grouptotal in savingsWithdrawalGroupsTotal"
@@ -136,12 +142,30 @@
                                     <input type="text" class="input-smaller" ng-model="total.dueAmount" disabled="disabled">
                                 </span>
                             </td>
+							<td ng-repeat="loanproduct in collectionsheetdata.loanProductsDueForDisbursal">
+								<span ng-repeat="total in loansDisbursementTotal" ng-show="loanproduct.id == total.productId">
+									<input type="text" class="input-smaller" ng-model="total.disbursementAmount" disabled="disabled">
+								</span>
+							</td>
                             <td ng-repeat="savingsproduct in collectionsheetdata.savingsProducts">
                                 <span ng-repeat="total in savingsWithdrawalTotal" ng-show="savingsproduct.id == total.productId">
                                     <input type="text" class="input-smaller" ng-model="total.withdrawalAmount" disabled="disabled">
                                 </span>
                             </td>
                     </tr>
+					<!-- Total Receipts Total Payouts Net Cash -->
+					<tr>
+						<td class="graybg" colspan="2">{{'label.input.totalreceipts' | translate}}</td>
+						<td> <input type="text" class="input-smaller" ng-model="totalreceipts" disabled="disabled"> </td>
+					</tr>
+					<tr>
+						<td class="graybg" colspan="2">{{'label.input.totalpayouts' | translate}}</td>
+						<td> <input type="text" class="input-smaller" ng-model="totalpayouts" disabled="disabled"> </td>
+					</tr>
+					<tr>
+						<td class="graybg" colspan="2">{{'label.input.netcash' | translate}}</td>
+						<td> <input type="text" class="input-smaller" ng-model="netcash" disabled="disabled"> </td>
+					</tr>
                 </table>
             </div>
             <div class="col-md-offset-9 paddedtop">
