@@ -456,7 +456,10 @@
 
             scope.submit = function () {
 
-                console.log("trggered sumbimt");
+
+                rootScope.blockUI = true;
+
+                console.log("rootScope.blockUI: " + rootScope.blockUI);
 
                 scope.formData.calendarId = scope.calendarId;
                 scope.formData.dateFormat = scope.df;
@@ -476,17 +479,41 @@
                 scope.formData.bulkSavingsDueTransactions = scope.bulkSavingsDueTransactions;
                 scope.formData.bulkSavingsWithdrawalTransactions = scope.bulkSavingsWithdrawalTransactions;
 
-                resourceFactory.centerResource.save({'centerId': scope.centerId, command: 'saveCollectionSheet'}, scope.formData, function (data) {
-                    localStorageService.add('Success', true);
-                    route.reload();
-                });
+                rootScope.blockUI = true;
+
+                resourceFactory.centerResource.save(
+                    {'centerId': scope.centerId, command: 'saveCollectionSheet'}, 
+                    scope.formData, 
+                    function (data) {
+                                        // localStorageService.add('Success', true);
+                                        // route.reload();
+                                        for (var i = 0; i < centerIdArray.length; i++) {
+                                            if (scope.centerId === centerIdArray[i].id && centerIdArray.length >= 1) {
+                                                    scope.staffCenterData[i].submitted = true;
+                                                    submittedStaffId.push({id: scope.staffCenterData[i].id});
+                                            }
+                                        }
+
+                                        if (centerIdArray.length === submittedStaffId.length) {
+                                            location.path('/entercollectionsheet');
+                                        }
+
+                                        if (centerIdArray.length-1 === submittedStaffId.length) {
+                                            scope.submitNextShow = false;
+                                            scope.submitShow = true;
+                                        }
+
+                                        for (var i = 0; i < centerIdArray.length; i++) {
+                                            if (!scope.staffCenterData[i].submitted) {
+                                            scope.getAllGroupsByCenter(scope.staffCenterData[i].id, scope.staffCenterData[i].collectionMeetingCalendar.id);
+                                            break;
+                                            }
+                                        }
+
+                    }
+                );
 
             };
-
-
-
-
-
 
 
         }
